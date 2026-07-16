@@ -1,6 +1,7 @@
 import path from 'node:path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { fileURLToPath } from 'node:url';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,8 +18,9 @@ export default {
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: path.resolve(__dirname, 'src', 'index.html'),
-			filename: 'index.[contenthash].html'
+			filename: 'index.html',
 		}),
+		new MiniCssExtractPlugin()
 	],
 	resolve: {
 		extensions: ['.ts', '.js'],
@@ -29,6 +31,24 @@ export default {
 				test: /\.ts$/,
 				use: 'ts-loader',
 				exclude: /node_modules/,
+			},
+			{
+				test: /\.css$/i,
+				use: [
+					{
+						loader: MiniCssExtractPlugin.loader,
+					},
+					{
+						loader: 'css-loader',
+						options: {
+							esModule: true,
+							modules: {
+								namedExport: true,
+								localIdentName: '[local]__[name]__word-wander',
+							},
+						},
+					},
+				],
 			},
 		],
 	},
