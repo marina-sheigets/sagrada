@@ -1,7 +1,10 @@
 import { singleton } from "tsyringe";
 import { BaseComponent } from "../../shared/base-component/base-component";
-import * as styles from "./dashboard.component.css";
+import { MessengerService } from "../../services/messenger/messenger.service";
 import { ButtonComponent } from "../../shared/button/button.component";
+import { Messages } from "../../constants/messages";
+
+import * as styles from "./dashboard.component.css";
 
 @singleton()
 export class DashboardComponent extends BaseComponent {
@@ -13,7 +16,8 @@ export class DashboardComponent extends BaseComponent {
 
 
     constructor(
-        protected playButtonComponent: ButtonComponent
+        protected playButtonComponent: ButtonComponent,
+        protected messenger: MessengerService
     ) {
         super(styles);
 
@@ -47,7 +51,11 @@ export class DashboardComponent extends BaseComponent {
 
     private addPlayButton() {
         this.playButtonComponent.setSize("large");
-        this.playButtonComponent.addButtonLabel("Start the game");
-        this.playButtonComponent.addButtonValue("Start the game");
+        this.playButtonComponent.addButtonLabel("Play");
+        this.playButtonComponent.addButtonValue("Play");
+
+        this.playButtonComponent.onClick.subscribe(() => {
+            this.messenger.send(Messages.ShowGameSettings)
+        })
     }
 }

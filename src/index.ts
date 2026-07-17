@@ -3,11 +3,13 @@ import "reflect-metadata";
 import { container, singleton } from "tsyringe";
 import { DashboardComponent } from "./components/dashboard/dashboard.component";
 import "./index.css";
+import { GameSettingsComponents } from "./components/game-settings/game-settings.component";
 
 @singleton()
 class Entry {
     constructor(
-        protected dashboardComponent: DashboardComponent
+        protected dashboardComponent: DashboardComponent,
+        protected gameSettingsComponent: GameSettingsComponents
     ) {
         const rootContainer = document.getElementById("root");
         if (!rootContainer) {
@@ -15,16 +17,22 @@ class Entry {
             return;
         }
 
-        rootContainer.appendChild(this.dashboardComponent.rootElement);
+        rootContainer.append(
+            this.dashboardComponent.rootElement,
+            this.gameSettingsComponent.rootElement
+        );
         // Game Dashboard
         // - Play button
 
         // Show config window
 
         // - number of players (maximum 4)
-        // - numbers of rounds (maximum 10)
-        // -  hints
+        // -  Show legal placements
+        //  First die must be placed on edge
         // difficulty (easy, medium, hard)
+        // advanced rules
+        // undo enabled - if on, player can undo his turn and re-select dice, and only after that finish his turn
+        // - do the logic of timer per player to restrict spent much time per turn
 
         // Game Initialization
         //  - initialize dices  (90 - 4 colors, 6 faces)

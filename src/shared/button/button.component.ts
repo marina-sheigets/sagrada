@@ -1,14 +1,14 @@
 import { injectable } from "tsyringe";
 import { BaseComponent } from "../base-component/base-component";
 import * as styles from './button.component.css';
-// import { Informer } from "../../services/informer/informer.service";
+import { Informer } from "../../services/informer/informer.service";
 
 @injectable()
 export class ButtonComponent extends BaseComponent {
     buttonIconWrapper = document.createElement('div');
     buttonLabel = document.createElement('span');
     button = document.createElement('button');
-    //onClick = new Informer<any>();
+    onClick = new Informer<any>();
 
     constructor(
     ) {
@@ -16,7 +16,7 @@ export class ButtonComponent extends BaseComponent {
 
         this.button.addEventListener('mousedown', (e: Event) => {
             e.stopPropagation();
-            //this.onClick.inform(e)
+            this.onClick.inform(e);
         });
         this.button.append(this.buttonIconWrapper, this.buttonLabel);
         this.rootElement.append(
