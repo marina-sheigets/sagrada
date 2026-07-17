@@ -5,6 +5,7 @@ import { ButtonComponent } from "../../shared/button/button.component";
 import { Messages } from "../../constants/messages";
 
 import * as styles from "./dashboard.component.css";
+import { GameSettingsComponents } from "../../components/game-settings/game-settings.component";
 
 @singleton()
 export class DashboardComponent extends BaseComponent {
@@ -17,6 +18,7 @@ export class DashboardComponent extends BaseComponent {
 
     constructor(
         protected playButtonComponent: ButtonComponent,
+        protected gameSettingsComponent: GameSettingsComponents,
         protected messenger: MessengerService
     ) {
         super(styles);
@@ -28,7 +30,8 @@ export class DashboardComponent extends BaseComponent {
         this.gameInfoContainer.append(
             this.gameTitle,
             this.gameDescription,
-            this.playButtonComponent.rootElement
+            this.playButtonComponent.rootElement,
+            this.gameSettingsComponent.rootElement
         );
 
         this.rootElement.append(
