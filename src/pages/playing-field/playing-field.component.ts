@@ -2,6 +2,7 @@ import { singleton } from 'tsyringe';
 import { RoundTrackerComponent } from '../../components/round-tracker/round-tracker.component';
 import { DicesBagService } from '../../services/dices-bag/dices-bag.service';
 import { BaseComponent } from '../../shared/base-component/base-component';
+import { BoardsFactoryService } from '../../services/boards-factory/boards-factory.service';
 
 import * as styles from './playing-field.component.css';
 
@@ -12,18 +13,17 @@ export class PlayingFieldComponent extends BaseComponent {
 	private playersBoardsContainer = document.createElement('div');
 	constructor(
 		protected roundTracker: RoundTrackerComponent,
-		//protected boardsFactory: BoardsFactoryService,
+		protected boardsFactory: BoardsFactoryService,
 		protected dicesBagService: DicesBagService,
 	) {
 		super(styles);
 
-		this.playersBoardsContainer
-			.append
-			//this.boardsFactory.init(this.AMOUNT_OF_PLAYERS)
-			();
+		this.playersBoardsContainer.append(this.boardsFactory.init(this.AMOUNT_OF_PLAYERS));
 
-		this.rootElement.append(this.roundTracker.rootElement);
+		this.rootElement.append(this.roundTracker.rootElement, this.playersBoardsContainer);
 		this.init();
+
+		this.playersBoardsContainer.classList.add(styles.playersBoardsContainer);
 	}
 
 	init() {
