@@ -14,7 +14,7 @@ export class DiceComponent extends BaseComponent {
 		super(styles);
 
 		this.diceElement = this.htmlToElement(html);
-		this.diceElement.classList.add(styles.dice);
+		this.diceElement.classList.add(styles.dice, styles.diceTemplate);
 		this.diceElement
 			.querySelectorAll<HTMLElement>('.pip')
 			.forEach((pip) => pip.classList.add(styles.pip));

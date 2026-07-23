@@ -3,7 +3,10 @@ import { Informer } from '../../services/informer/informer.service';
 import { BaseComponent } from '../../shared/base-component/base-component';
 import { BoardCell } from '../../types/board-cell';
 
+import html from '../dice/dice.component.html';
+
 import * as styles from './game-board.component.css';
+import * as diceStyles from '../dice/dice.component.css';
 
 interface Player {
 	id: string;
@@ -17,6 +20,7 @@ export class GameBoard extends BaseComponent {
 	onCellClick = new Informer();
 	private cellsContainer = document.createElement('div');
 	private boardTitle = document.createElement('h2');
+
 	constructor(
 		protected gameBoardService: GameBoardService,
 		//protected player: Player,
@@ -37,7 +41,13 @@ export class GameBoard extends BaseComponent {
 
 	private render(board: BoardCell[]) {
 		for (const boardCell of board) {
-			const cell = document.createElement('div');
+			const cell = this.htmlToElement(html);
+
+			cell.classList.add(diceStyles.diceTemplate);
+
+			cell.querySelectorAll<HTMLElement>('.pip').forEach((pip) =>
+				pip.classList.add(diceStyles.pip),
+			);
 
 			cell.id = boardCell.id;
 
@@ -48,7 +58,7 @@ export class GameBoard extends BaseComponent {
 			}
 
 			if (boardCell.constantValue) {
-				cell.textContent = String(boardCell.constantValue);
+				cell.dataset.face = String(boardCell.constantValue);
 			}
 
 			cell.addEventListener('click', () => {

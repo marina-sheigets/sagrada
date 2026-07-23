@@ -1,15 +1,5 @@
 .dice {
-	width: 40px;
-	height: 40px;
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-template-rows: repeat(3, 1fr);
-	padding: 5px;
-	grid-template-areas:
-		'a . c'
-		'e g f'
-		'd . b';
-
+	cursor: pointer;
 	background: linear-gradient(145deg, #ffffff, #e6e6e6);
 	border-radius: 10px;
 
@@ -20,8 +10,19 @@
 		inset -2px -2px 4px rgba(0, 0, 0, 0.15);
 
 	border: 1px solid rgba(0, 0, 0, 0.1);
+}
 
-	cursor: pointer;
+.diceTemplate {
+	width: 40px;
+	height: 40px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	padding: 5px;
+	grid-template-areas:
+		'a . c'
+		'e g f'
+		'd . b';
 }
 
 .pip {
@@ -57,46 +58,46 @@
 }
 
 /* face 1 */
-.dice[data-face='1'] .pip[data-pip='g'] {
+.diceTemplate[data-face='1'] .pip[data-pip='g'] {
 	display: block;
 }
 
 /* face 2 */
-.dice[data-face='2'] .pip[data-pip='a'],
-.dice[data-face='2'] .pip[data-pip='b'] {
+.diceTemplate[data-face='2'] .pip[data-pip='a'],
+.diceTemplate[data-face='2'] .pip[data-pip='b'] {
 	display: block;
 }
 
 /* face 3 */
-.dice[data-face='3'] .pip[data-pip='a'],
-.dice[data-face='3'] .pip[data-pip='g'],
-.dice[data-face='3'] .pip[data-pip='b'] {
+.diceTemplate[data-face='3'] .pip[data-pip='a'],
+.diceTemplate[data-face='3'] .pip[data-pip='g'],
+.diceTemplate[data-face='3'] .pip[data-pip='b'] {
 	display: block;
 }
 
 /* face 4 */
-.dice[data-face='4'] .pip[data-pip='a'],
-.dice[data-face='4'] .pip[data-pip='c'],
-.dice[data-face='4'] .pip[data-pip='d'],
-.dice[data-face='4'] .pip[data-pip='b'] {
+.diceTemplate[data-face='4'] .pip[data-pip='a'],
+.diceTemplate[data-face='4'] .pip[data-pip='c'],
+.diceTemplate[data-face='4'] .pip[data-pip='d'],
+.diceTemplate[data-face='4'] .pip[data-pip='b'] {
 	display: block;
 }
 
 /* face 5 */
-.dice[data-face='5'] .pip[data-pip='a'],
-.dice[data-face='5'] .pip[data-pip='c'],
-.dice[data-face='5'] .pip[data-pip='g'],
-.dice[data-face='5'] .pip[data-pip='d'],
-.dice[data-face='5'] .pip[data-pip='b'] {
+.diceTemplate[data-face='5'] .pip[data-pip='a'],
+.diceTemplate[data-face='5'] .pip[data-pip='c'],
+.diceTemplate[data-face='5'] .pip[data-pip='g'],
+.diceTemplate[data-face='5'] .pip[data-pip='d'],
+.diceTemplate[data-face='5'] .pip[data-pip='b'] {
 	display: block;
 }
 
 /* face 6 */
-.dice[data-face='6'] .pip[data-pip='a'],
-.dice[data-face='6'] .pip[data-pip='c'],
-.dice[data-face='6'] .pip[data-pip='e'],
-.dice[data-face='6'] .pip[data-pip='f'],
-.dice[data-face='6'] .pip[data-pip='d'],
-.dice[data-face='6'] .pip[data-pip='b'] {
+.diceTemplate[data-face='6'] .pip[data-pip='a'],
+.diceTemplate[data-face='6'] .pip[data-pip='c'],
+.diceTemplate[data-face='6'] .pip[data-pip='e'],
+.diceTemplate[data-face='6'] .pip[data-pip='f'],
+.diceTemplate[data-face='6'] .pip[data-pip='d'],
+.diceTemplate[data-face='6'] .pip[data-pip='b'] {
 	display: block;
 }
