@@ -1,0 +1,102 @@
+.dice {
+	width: 40px;
+	height: 40px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	padding: 5px;
+	grid-template-areas:
+		'a . c'
+		'e g f'
+		'd . b';
+
+	background: linear-gradient(145deg, #ffffff, #e6e6e6);
+	border-radius: 10px;
+
+	box-shadow:
+		0 8px 16px rgba(0, 0, 0, 0.25),
+		0 2px 4px rgba(0, 0, 0, 0.15),
+		inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+		inset -2px -2px 4px rgba(0, 0, 0, 0.15);
+
+	border: 1px solid rgba(0, 0, 0, 0.1);
+
+	cursor: pointer;
+}
+
+.pip {
+	display: none;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #333;
+	align-self: center;
+	justify-self: center;
+}
+
+.pip[data-pip='a'] {
+	grid-area: a;
+}
+.pip[data-pip='b'] {
+	grid-area: b;
+}
+.pip[data-pip='c'] {
+	grid-area: c;
+}
+.pip[data-pip='d'] {
+	grid-area: d;
+}
+.pip[data-pip='e'] {
+	grid-area: e;
+}
+.pip[data-pip='f'] {
+	grid-area: f;
+}
+.pip[data-pip='g'] {
+	grid-area: g;
+}
+
+/* face 1 */
+.dice[data-face='1'] .pip[data-pip='g'] {
+	display: block;
+}
+
+/* face 2 */
+.dice[data-face='2'] .pip[data-pip='a'],
+.dice[data-face='2'] .pip[data-pip='b'] {
+	display: block;
+}
+
+/* face 3 */
+.dice[data-face='3'] .pip[data-pip='a'],
+.dice[data-face='3'] .pip[data-pip='g'],
+.dice[data-face='3'] .pip[data-pip='b'] {
+	display: block;
+}
+
+/* face 4 */
+.dice[data-face='4'] .pip[data-pip='a'],
+.dice[data-face='4'] .pip[data-pip='c'],
+.dice[data-face='4'] .pip[data-pip='d'],
+.dice[data-face='4'] .pip[data-pip='b'] {
+	display: block;
+}
+
+/* face 5 */
+.dice[data-face='5'] .pip[data-pip='a'],
+.dice[data-face='5'] .pip[data-pip='c'],
+.dice[data-face='5'] .pip[data-pip='g'],
+.dice[data-face='5'] .pip[data-pip='d'],
+.dice[data-face='5'] .pip[data-pip='b'] {
+	display: block;
+}
+
+/* face 6 */
+.dice[data-face='6'] .pip[data-pip='a'],
+.dice[data-face='6'] .pip[data-pip='c'],
+.dice[data-face='6'] .pip[data-pip='e'],
+.dice[data-face='6'] .pip[data-pip='f'],
+.dice[data-face='6'] .pip[data-pip='d'],
+.dice[data-face='6'] .pip[data-pip='b'] {
+	display: block;
+}

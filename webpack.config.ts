@@ -20,7 +20,7 @@ export default {
 			template: path.resolve(__dirname, 'src', 'index.html'),
 			filename: 'index.html',
 		}),
-		new MiniCssExtractPlugin()
+		new MiniCssExtractPlugin(),
 	],
 	resolve: {
 		extensions: ['.ts', '.js'],
@@ -31,6 +31,10 @@ export default {
 				test: /\.ts$/,
 				use: 'ts-loader',
 				exclude: /node_modules/,
+			},
+			{
+				test: /\.html$/i,
+				loader: 'html-loader',
 			},
 			{
 				test: /\.css$/i,

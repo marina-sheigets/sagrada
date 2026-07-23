@@ -1,7 +1,8 @@
-import { Color } from "./color";
+import { Color } from './color';
 
 export interface Dice {
-    value: number;
-    oppositeFaceValue: number;
-    color: Color;
+	id: string;
+	value: number;
+	oppositeFaceValue: number;
+	color: Color;
 }
