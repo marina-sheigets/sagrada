@@ -1,8 +1,9 @@
 import { singleton } from 'tsyringe';
 import { Dice } from '../../types/dice';
-import { COLORS } from '../../constants/dice-colors';
+import { DICE_COLOR } from '../../constants/dice-colors';
 import { getRandomElementsFromArray } from '../../utils/get-random-elements-from-array';
 import { generateId } from '../../utils/generate-id';
+import { Color } from '../../types/color';
 
 @singleton()
 export class DicesBagService {
@@ -17,12 +18,15 @@ export class DicesBagService {
 	private currentDices: Dice[] = [];
 
 	initAllDices() {
-		for (const color of COLORS) {
+		for (const color of Object.values(Color)) {
 			for (let value = 1; value <= this.maxDiceValue; value++) {
+				const hexColor = DICE_COLOR[color];
+				const oppositeFaceValue = 7 - value;
+
 				this.allDices.push(
-					{ id: generateId(), value, color, oppositeFaceValue: 7 - value },
-					{ id: generateId(), value, color, oppositeFaceValue: 7 - value },
-					{ id: generateId(), value, color, oppositeFaceValue: 7 - value },
+					{ id: generateId(), value, color: hexColor, oppositeFaceValue },
+					{ id: generateId(), value, color: hexColor, oppositeFaceValue },
+					{ id: generateId(), value, color: hexColor, oppositeFaceValue },
 				);
 			}
 		}

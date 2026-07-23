@@ -1,11 +1,9 @@
 import { singleton } from 'tsyringe';
-import { Color } from '../../types/color';
-import { Dice } from '../../types/dice';
 import { generateId } from '../../utils/generate-id';
-import { COLORS } from '../../constants/dice-colors';
 import { Difficulty } from '../../types/difficulty';
 import { BoardCell } from '../../types/board-cell';
 import { VALUES } from '../../constants/dice-values';
+import { DICE_COLOR } from '../../constants/dice-colors';
 
 @singleton()
 export class GameBoardService {
@@ -54,7 +52,11 @@ export class GameBoardService {
 		}
 
 		if (Math.random() < 0.5) {
-			cell.constantColor = this.generateOption(cell, COLORS, (c) => c.constantColor);
+			cell.constantColor = this.generateOption(
+				cell,
+				Object.values(DICE_COLOR),
+				(c) => c.constantColor,
+			);
 		} else {
 			cell.constantValue = this.generateOption(cell, VALUES, (c) => c.constantValue);
 		}
@@ -64,7 +66,7 @@ export class GameBoardService {
 		cell: BoardCell,
 		options: readonly T[],
 		selector: (cell: BoardCell) => T | undefined,
-	): T {
+	): T | undefined {
 		const forbidden = new Set<T>();
 
 		const left = this.getCell(cell.row, cell.column - 1);
@@ -81,6 +83,10 @@ export class GameBoardService {
 		}
 
 		const available = options.filter((option) => !forbidden.has(option));
+
+		if (available.length === 0) {
+			return;
+		}
 
 		return available[Math.floor(Math.random() * available.length)];
 	}

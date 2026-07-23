@@ -1,3 +1,7 @@
-import { COLORS } from "../constants/dice-colors";
-
-export type Color = typeof COLORS[number];
+export enum Color {
+	RED = 'RED',
+	BLUE = 'BLUE',
+	GREEN = 'GREEN',
+	YELLOW = 'YELLOW',
+	PURPLE = 'PURPLE',
+}
