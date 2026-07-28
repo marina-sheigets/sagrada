@@ -124,7 +124,6 @@ export class GameBoardService {
 		zoneElement: HTMLElement;
 		boardId: string;
 	}): boolean {
-		debugger;
 		const board = this.findBoardById(boardId);
 		if (!board) return false;
 

@@ -82,8 +82,6 @@ export class DragDropService {
 		const zoneElement = draggableDice?.closest<HTMLElement>(this.dropZoneSelector);
 		const boardId = zoneElement?.closest('[data-role=board]')?.id!;
 
-		debugger;
-
 		if (zoneElement && this.selectedDicePayload) {
 			const zoneId = zoneElement.dataset.dropZoneId!;
 
@@ -97,7 +95,6 @@ export class DragDropService {
 				: false;
 
 			if (isPositionValid) {
-				debugger;
 				this.messenger.send(Messages.PlaceDice, {
 					payload: this.selectedDicePayload.payload,
 					dropZoneId: zoneId,
