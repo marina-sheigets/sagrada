@@ -4,4 +4,5 @@ export const enum Messages {
 	StartGame = 'StartGame',
 	InitCurrentDices = 'InitCurrentDices',
 	InitBoards = 'InitBoards',
+	PlaceDice = 'PlaceDice',
 }

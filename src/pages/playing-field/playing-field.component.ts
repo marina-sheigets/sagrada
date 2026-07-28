@@ -35,7 +35,7 @@ export class PlayingFieldComponent extends BaseComponent {
 		this.messenger.subscribe(Messages.InitBoards, this.initPlayingField.bind(this));
 	}
 
-	private initPlayingField(boardsObjects: { [player: string]: BoardCell[] }) {
+	private initPlayingField(boardsObjects: { [boardId: string]: BoardCell[] }) {
 		const boardsComponent: DocumentFragment = this.boardsFactory.init(boardsObjects);
 
 		this.playersBoardsContainer.append(boardsComponent);

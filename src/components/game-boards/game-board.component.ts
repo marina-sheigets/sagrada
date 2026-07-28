@@ -1,18 +1,16 @@
+import { singleton } from 'tsyringe';
 import { GameBoardService } from '../../services/game-board/game-board.service';
 import { Informer } from '../../services/informer/informer.service';
 import { BaseComponent } from '../../shared/base-component/base-component';
 import { BoardCell } from '../../types/board-cell';
+import { DragDropService } from '../../services/drag-and-drop/drag-and-drop.service';
 
 import html from '../dice/dice.component.html';
 
 import * as styles from './game-board.component.css';
 import * as diceStyles from '../dice/dice.component.css';
 
-interface Player {
-	id: string;
-	nickname: string;
-}
-
+@singleton()
 export class GameBoard extends BaseComponent {
 	onCellClick = new Informer();
 	private cellsContainer = document.createElement('div');
@@ -20,18 +18,22 @@ export class GameBoard extends BaseComponent {
 
 	constructor(
 		protected gameBoardService: GameBoardService,
-		protected player: number,
+		protected dragDropService: DragDropService,
+		protected boardId: string,
 		protected board: BoardCell[],
+		protected playerIndex: number,
 	) {
 		super(styles);
 
-		this.boardTitle.textContent = 'Player ' + (player + 1);
+		this.boardTitle.textContent = 'Player ' + (playerIndex + 1);
 
 		this.rootElement.append(this.boardTitle, this.cellsContainer);
 
 		this.render(board);
 
 		this.cellsContainer.classList.add(styles.cellsContainer);
+		this.cellsContainer.dataset.role = 'board';
+		this.cellsContainer.id = boardId;
 	}
 
 	public render(board: BoardCell[]) {
@@ -45,7 +47,7 @@ export class GameBoard extends BaseComponent {
 			);
 
 			cell.id = boardCell.id;
-
+			cell.dataset.dropZoneId = boardCell.id;
 			cell.classList.add(styles.boardCell);
 
 			if (boardCell.constantColor) {
@@ -55,10 +57,6 @@ export class GameBoard extends BaseComponent {
 			if (boardCell.constantValue) {
 				cell.dataset.face = String(boardCell.constantValue);
 			}
-
-			cell.addEventListener('click', () => {
-				//this.gameBoardService.validate(boardCell.id);
-			});
 
 			this.cellsContainer.append(cell);
 		}

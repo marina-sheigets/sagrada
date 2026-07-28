@@ -1,39 +1,33 @@
 // drag-drop.service.ts
 import { singleton } from 'tsyringe';
-import { Informer } from '../informer/informer.service';
-
-export interface DropZone {
-	id: string;
-	element: HTMLElement;
-	canAccept?: (payload: unknown) => boolean;
-}
+import { Dice } from '../../types/dice';
+import { MessengerService } from '../messenger/messenger.service';
+import { Messages } from '../../constants/messages';
+import { IsPositionValidProps } from '../../types/is-position-valid';
 
 @singleton()
 export class DragDropService {
-	onDrop = new Informer<{ draggableId: string; payload: unknown; dropZoneId: string }>();
+	private dropZoneSelector = '[data-drop-zone-id]';
+	private isValid?: IsPositionValidProps;
 
-	private dropZones = new Map<string, DropZone>();
 	private draggedElement: HTMLElement | null = null;
 	private ghostElement: HTMLElement | null = null;
-	private currentPayload: { id: string; payload: unknown } | null = null;
+	private selectedDicePayload: { id: string; payload: Dice } | null = null;
 
-	registerDropZone(zone: DropZone) {
-		this.dropZones.set(zone.id, zone);
+	constructor(protected messenger: MessengerService) {}
+	configure(isValid: IsPositionValidProps) {
+		this.isValid = isValid;
 	}
 
-	unregisterDropZone(id: string) {
-		this.dropZones.delete(id);
-	}
-
-	makeDraggable(element: HTMLElement, payload: unknown, id: string) {
+	makeDraggable(element: HTMLElement, payload: Dice, id: string) {
 		element.style.touchAction = 'none'; // stops the page from scrolling while dragging on touch
 		element.addEventListener('pointerdown', (e) => this.onPointerDown(e, element, payload, id));
 	}
 
-	private onPointerDown(e: PointerEvent, element: HTMLElement, payload: unknown, id: string) {
+	private onPointerDown(e: PointerEvent, element: HTMLElement, payload: Dice, id: string) {
 		e.preventDefault();
 
-		this.currentPayload = { id, payload };
+		this.selectedDicePayload = { id, payload };
 		this.draggedElement = element;
 		this.ghostElement = this.createGhost(element);
 
@@ -55,7 +49,7 @@ export class DragDropService {
 		const rect = element.getBoundingClientRect();
 
 		Object.assign(ghost.style, {
-			position: 'fixed',
+			position: 'fixed', // stop scrolling on page
 			left: `${rect.left}px`,
 			top: `${rect.top}px`,
 			width: `${rect.width}px`,
@@ -84,32 +78,36 @@ export class DragDropService {
 	}
 
 	private onPointerUp(e: PointerEvent) {
-		const dropZone = this.findDropZoneAtPoint(e.clientX, e.clientY);
-		const accepted =
-			dropZone &&
-			this.currentPayload &&
-			(!dropZone.canAccept || dropZone.canAccept(this.currentPayload.payload));
+		const draggableDice = document.elementFromPoint(e.clientX, e.clientY);
+		const zoneElement = draggableDice?.closest<HTMLElement>(this.dropZoneSelector);
+		const boardId = zoneElement?.closest('[data-role=board]')?.id!;
 
-		if (accepted && dropZone && this.currentPayload) {
-			this.onDrop.inform({
-				draggableId: this.currentPayload.id,
-				payload: this.currentPayload.payload,
-				dropZoneId: dropZone.id,
-			});
-		}
-		// if not accepted, ghost just disappears and the dice snaps back — see cleanup()
+		debugger;
 
-		this.cleanup();
-	}
+		if (zoneElement && this.selectedDicePayload) {
+			const zoneId = zoneElement.dataset.dropZoneId!;
 
-	private findDropZoneAtPoint(x: number, y: number): DropZone | undefined {
-		for (const zone of this.dropZones.values()) {
-			const rect = zone.element.getBoundingClientRect();
-			if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-				return zone;
+			const isPositionValid = this.isValid
+				? this.isValid({
+						payload: this.selectedDicePayload.payload,
+						zoneId,
+						zoneElement,
+						boardId,
+					})
+				: false;
+
+			if (isPositionValid) {
+				debugger;
+				this.messenger.send(Messages.PlaceDice, {
+					payload: this.selectedDicePayload.payload,
+					dropZoneId: zoneId,
+					dropZoneElement: zoneElement,
+					boardId: boardId,
+				});
 			}
 		}
-		return undefined;
+
+		this.cleanup();
 	}
 
 	private cleanup() {
@@ -121,6 +119,6 @@ export class DragDropService {
 			this.draggedElement = null;
 		}
 
-		this.currentPayload = null;
+		this.selectedDicePayload = null;
 	}
 }

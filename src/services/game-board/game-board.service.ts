@@ -4,6 +4,16 @@ import { Difficulty } from '../../types/difficulty';
 import { BoardCell } from '../../types/board-cell';
 import { VALUES } from '../../constants/dice-values';
 import { DICE_COLOR } from '../../constants/dice-colors';
+import { Dice } from '../../types/dice';
+import { MessengerService } from '../messenger/messenger.service';
+import { Messages } from '../../constants/messages';
+
+interface OnDiceDropProps {
+	payload: Dice;
+	dropZoneId: string;
+	dropZoneElement: HTMLElement;
+	boardId: string;
+}
 
 @singleton()
 export class GameBoardService {
@@ -11,7 +21,7 @@ export class GameBoardService {
 	private readonly rows = 4;
 	private readonly columns = 5;
 
-	private gameBoard: BoardCell[] = [];
+	private boards: { [boardId: string]: BoardCell[] } = {};
 
 	private readonly restrictionChance: Record<Difficulty, number> = {
 		[Difficulty.Light]: 0.1,
@@ -21,8 +31,13 @@ export class GameBoardService {
 		[Difficulty.SuperHard]: 0.8,
 	};
 
-	createBoard(): BoardCell[] {
-		this.gameBoard = [];
+	constructor(protected messenger: MessengerService) {
+		this.messenger.subscribe(Messages.PlaceDice, this.handlePlaceDice.bind(this));
+	}
+
+	createBoard(): { boardId: string; board: BoardCell[] } {
+		const board: BoardCell[] = [];
+		const boardId = generateId();
 
 		for (let row = 0; row < this.rows; row++) {
 			for (let column = 0; column < this.columns; column++) {
@@ -37,40 +52,43 @@ export class GameBoardService {
 						column === this.columns - 1,
 				};
 
-				this.assignRestriction(cell);
+				this.assignRestriction(board, cell);
 
-				this.gameBoard.push(cell);
+				board.push(cell);
 			}
 		}
+		this.boards[boardId] = board;
 
-		return this.gameBoard;
+		return { boardId, board };
 	}
 
-	private assignRestriction(cell: BoardCell) {
+	private assignRestriction(board: BoardCell[], cell: BoardCell) {
 		if (Math.random() > this.restrictionChance[this.difficulty]) {
 			return;
 		}
 
 		if (Math.random() < 0.5) {
 			cell.constantColor = this.generateOption(
+				board,
 				cell,
 				Object.values(DICE_COLOR),
 				(c) => c.constantColor,
 			);
 		} else {
-			cell.constantValue = this.generateOption(cell, VALUES, (c) => c.constantValue);
+			cell.constantValue = this.generateOption(board, cell, VALUES, (c) => c.constantValue);
 		}
 	}
 
 	private generateOption<T>(
+		board: BoardCell[],
 		cell: BoardCell,
 		options: readonly T[],
 		selector: (cell: BoardCell) => T | undefined,
 	): T | undefined {
 		const forbidden = new Set<T>();
 
-		const left = this.getCell(cell.row, cell.column - 1);
-		const top = this.getCell(cell.row - 1, cell.column);
+		const left = this.getCell(board, cell.row, cell.column - 1);
+		const top = this.getCell(board, cell.row - 1, cell.column);
 
 		if (left) {
 			const value = selector(left);
@@ -91,7 +109,93 @@ export class GameBoardService {
 		return available[Math.floor(Math.random() * available.length)];
 	}
 
-	private getCell(row: number, column: number): BoardCell | undefined {
-		return this.gameBoard.find((c) => c.row === row && c.column === column);
+	private getCell(board: BoardCell[], row: number, column: number): BoardCell | undefined {
+		return board.find((c) => c.row === row && c.column === column);
+	}
+
+	canPlaceDice({
+		boardId,
+		payload,
+		zoneElement,
+		zoneId,
+	}: {
+		payload: Dice;
+		zoneId: string;
+		zoneElement: HTMLElement;
+		boardId: string;
+	}): boolean {
+		debugger;
+		const board = this.findBoardById(boardId);
+		if (!board) return false;
+
+		const cellObject = this.getCellById(board, zoneId);
+		if (!cellObject) return false;
+		if (cellObject.dice) return false;
+
+		if (cellObject.constantColor && cellObject.constantColor !== payload.color) return false;
+		if (cellObject.constantValue && cellObject.constantValue !== payload.value) return false;
+
+		const isAnyDicePlaced = board.some((cell) => cell.dice);
+		if (!isAnyDicePlaced) return cellObject.isEdgeCell;
+
+		if (!this.checkPosition(board, cellObject)) return false;
+		return this.checkCompatibilityWithNeighbors(board, cellObject, payload);
+	}
+
+	private findBoardById(boardId: string): BoardCell[] | undefined {
+		return this.boards[boardId];
+	}
+
+	private checkPosition(board: BoardCell[], cellObject: BoardCell) {
+		const allNeighbors = this.getAllNeighbors(board, cellObject);
+		const hasAdjacentDice = allNeighbors.some((n) => n.dice);
+
+		if (!hasAdjacentDice) return false; // must touch at least one placed dice, any direction
+	}
+
+	private checkCompatibilityWithNeighbors(board: BoardCell[], cellObject: BoardCell, dice: Dice) {
+		const orthogonalNeighbors = this.getOrthogonalNeighbors(board, cellObject);
+		const conflictsWithNeighbor = orthogonalNeighbors.some(
+			(n) => n.dice && (n.dice.color === dice.color || n.dice.value === dice.value),
+		);
+		return !conflictsWithNeighbor;
+	}
+
+	private getCellById(board: BoardCell[], id: string): BoardCell | undefined {
+		return board.find((c) => c.id === id);
+	}
+
+	private getAllNeighbors(board: BoardCell[], cell: BoardCell): BoardCell[] {
+		return [
+			this.getCell(board, cell.row - 1, cell.column),
+			this.getCell(board, cell.row + 1, cell.column),
+			this.getCell(board, cell.row, cell.column - 1),
+			this.getCell(board, cell.row, cell.column + 1),
+			this.getCell(board, cell.row - 1, cell.column - 1),
+			this.getCell(board, cell.row - 1, cell.column + 1),
+			this.getCell(board, cell.row + 1, cell.column - 1),
+			this.getCell(board, cell.row + 1, cell.column + 1),
+		].filter((c): c is BoardCell => c !== undefined);
+	}
+
+	private getOrthogonalNeighbors(board: BoardCell[], cell: BoardCell): BoardCell[] {
+		return [
+			this.getCell(board, cell.row - 1, cell.column),
+			this.getCell(board, cell.row + 1, cell.column),
+			this.getCell(board, cell.row, cell.column - 1),
+			this.getCell(board, cell.row, cell.column + 1),
+		].filter((c): c is BoardCell => c !== undefined);
+	}
+
+	private handlePlaceDice({ dropZoneId, payload, boardId }: OnDiceDropProps) {
+		this.boards[boardId] = this.boards[boardId].map((cell) => {
+			if (cell.id === dropZoneId) {
+				return {
+					...cell,
+					dice: payload,
+				};
+			}
+			return cell;
+		});
 	}
 }

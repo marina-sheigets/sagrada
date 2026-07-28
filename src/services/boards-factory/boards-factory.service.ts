@@ -2,22 +2,29 @@ import { injectable } from 'tsyringe';
 import { GameBoard } from '../../components/game-boards/game-board.component';
 import { GameBoardService } from '../game-board/game-board.service';
 import { BoardCell } from '../../types/board-cell';
+import { DragDropService } from '../drag-and-drop/drag-and-drop.service';
 
 @injectable()
 export class BoardsFactoryService {
-	constructor(protected gameBoardService: GameBoardService) {}
+	constructor(
+		protected gameBoardService: GameBoardService,
+		protected dragDropService: DragDropService,
+	) {}
 
-	init(boardsObjects: { [player: string]: BoardCell[] }) {
+	init(boardsObjects: { [boardId: string]: BoardCell[] }) {
 		const fragment = document.createDocumentFragment();
-		const amountOfBoards = Object.keys(boardsObjects).length;
 
-		for (let player = 0; player < amountOfBoards; player++) {
-			const board = boardsObjects[player];
-			const newBoard = new GameBoard(this.gameBoardService, player, board);
+		for (let boardId in boardsObjects) {
+			const board = boardsObjects[boardId];
+			let playerIndex = 1;
 
-			// newBoard.onCellClick((cellObj)=>{
-			//     // validate turn
-			// })
+			const newBoard = new GameBoard(
+				this.gameBoardService,
+				this.dragDropService,
+				boardId,
+				board,
+				playerIndex,
+			);
 
 			fragment.append(newBoard.rootElement);
 		}

@@ -5,20 +5,25 @@ import { GameSettingsService } from '../game-settings/game-settings.service';
 import { DicesBagService } from '../dices-bag/dices-bag.service';
 import { GameBoardService } from '../game-board/game-board.service';
 import { BoardCell } from '../../types/board-cell';
+import { DragDropService } from '../drag-and-drop/drag-and-drop.service';
 
 /**
  * Main class for keeping all game variables and controlling all the process
  */
 @singleton()
 export class GameControllerService {
-	boards: BoardCell[][] = [];
+	boards: { [boardId: string]: BoardCell[] } = {};
+
 	constructor(
 		protected gameSettingsService: GameSettingsService,
 		protected messenger: MessengerService,
 		protected dicesBagService: DicesBagService,
 		protected gameBoardService: GameBoardService,
+		protected dragDropService: DragDropService,
 	) {
 		this.messenger.subscribe(Messages.StartGame, this.startGame.bind(this));
+
+		dragDropService.configure((data) => gameBoardService.canPlaceDice(data));
 	}
 
 	private startGame() {
@@ -42,9 +47,11 @@ export class GameControllerService {
 	private createBoards() {
 		const numberOfPlayers = this.gameSettingsService.getNumberOfPlayers();
 
-		this.boards = Array.from({ length: numberOfPlayers }, () =>
-			this.gameBoardService.createBoard(),
-		);
+		for (let i = 0; i < numberOfPlayers; i++) {
+			const { boardId, board } = this.gameBoardService.createBoard();
+
+			this.boards[boardId] = board;
+		}
 
 		this.messenger.send(Messages.InitBoards, this.boards);
 	}
