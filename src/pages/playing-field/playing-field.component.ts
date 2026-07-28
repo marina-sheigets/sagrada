@@ -36,6 +36,8 @@ export class PlayingFieldComponent extends BaseComponent {
 	}
 
 	private initPlayingField(boardsObjects: { [boardId: string]: BoardCell[] }) {
+		this.playersBoardsContainer.textContent = '';
+
 		const boardsComponent: DocumentFragment = this.boardsFactory.init(boardsObjects);
 
 		this.playersBoardsContainer.append(boardsComponent);

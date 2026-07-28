@@ -196,5 +196,7 @@ export class GameBoardService {
 			}
 			return cell;
 		});
+
+		this.messenger.send(Messages.InitBoards, this.boards);
 	}
 }
