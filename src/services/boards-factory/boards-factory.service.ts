@@ -14,9 +14,9 @@ export class BoardsFactoryService {
 	init(boardsObjects: { [boardId: string]: BoardCell[] }) {
 		const fragment = document.createDocumentFragment();
 
+		let playerIndex = 1;
 		for (let boardId in boardsObjects) {
 			const board = boardsObjects[boardId];
-			let playerIndex = 1;
 
 			const newBoard = new GameBoard(
 				this.gameBoardService,
@@ -26,6 +26,7 @@ export class BoardsFactoryService {
 				playerIndex,
 			);
 
+			playerIndex++;
 			fragment.append(newBoard.rootElement);
 		}
 
