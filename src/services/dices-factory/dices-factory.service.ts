@@ -7,21 +7,18 @@ export class DicesFactoryService {
 	constructor() {}
 
 	createDices(dices: Dice[]) {
-		const documentFragment = document.createDocumentFragment();
-
+		const fragment = document.createDocumentFragment();
 		dices.forEach((dice) => {
-			const newDiceComponent = new DiceComponent();
-
-			newDiceComponent.initFace(dice);
-
-			newDiceComponent.onDiceSelect.subscribe(() => {
-				// send message to show available position on board
-				// show drag and drop move
-			});
-
-			documentFragment.append(newDiceComponent.rootElement);
+			const component = this.createDiceComponent(dice);
+			fragment.append(component.rootElement);
 		});
+		return fragment;
+	}
 
-		return documentFragment;
+	protected createDiceComponent(dice: Dice): DiceComponent {
+		const component = new DiceComponent();
+		component.initFace(dice);
+
+		return component;
 	}
 }

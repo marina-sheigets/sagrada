@@ -1,8 +1,8 @@
 import { singleton } from 'tsyringe';
 import { DicesBagService } from '../../services/dices-bag/dices-bag.service';
-import { DicesFactoryService } from '../../services/dices-factory/dices-factory.service';
 import { BaseComponent } from '../../shared/base-component/base-component';
 import { MessengerService } from '../../services/messenger/messenger.service';
+import { CurrentDicesFactoryService } from '../../services/dices-factory/current-dices-factory.service';
 import { Messages } from '../../constants/messages';
 
 import * as styles from './current-dices.component.css';
@@ -11,7 +11,7 @@ import * as styles from './current-dices.component.css';
 export class CurrentDicesComponent extends BaseComponent {
 	constructor(
 		protected dicesBagService: DicesBagService,
-		protected dicesFactory: DicesFactoryService,
+		protected dicesFactory: CurrentDicesFactoryService,
 		protected messenger: MessengerService,
 	) {
 		super(styles);
