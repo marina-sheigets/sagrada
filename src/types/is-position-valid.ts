@@ -1,13 +1,3 @@
-import { Dice } from './dice';
+import { PlaceDataPayload } from './place-dice-payload';
 
-export type IsPositionValidProps = ({
-	payload,
-	zoneElement,
-	zoneId,
-	boardId,
-}: {
-	payload: Dice;
-	zoneId: string;
-	zoneElement: HTMLElement;
-	boardId: string;
-}) => boolean;
+export type IsPositionValidProps = (payload: PlaceDataPayload) => boolean;

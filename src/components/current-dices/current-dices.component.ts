@@ -20,6 +20,8 @@ export class CurrentDicesComponent extends BaseComponent {
 	}
 
 	shuffle() {
+		this.rootElement.textContent = '';
+
 		const currentDices = this.dicesBagService.getDicesPerRound();
 		this.rootElement.append(this.dicesFactory.createDices(currentDices));
 	}

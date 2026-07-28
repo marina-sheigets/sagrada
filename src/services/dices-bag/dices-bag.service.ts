@@ -4,6 +4,9 @@ import { DICE_COLOR } from '../../constants/dice-colors';
 import { getRandomElementsFromArray } from '../../utils/get-random-elements-from-array';
 import { generateId } from '../../utils/generate-id';
 import { Color } from '../../types/color';
+import { MessengerService } from '../messenger/messenger.service';
+import { Messages } from '../../constants/messages';
+import { PlaceDataPayload } from '../../types/place-dice-payload';
 
 @singleton()
 export class DicesBagService {
@@ -16,6 +19,10 @@ export class DicesBagService {
 	private unusedDices: Dice[] = [];
 
 	private currentDices: Dice[] = [];
+
+	constructor(protected messenger: MessengerService) {
+		this.messenger.subscribe(Messages.PlaceDice, this.removeDiceFromCurrent.bind(this));
+	}
 
 	initAllDices() {
 		for (const color of Object.values(Color)) {
@@ -46,5 +53,12 @@ export class DicesBagService {
 
 	getDicesPerRound() {
 		return this.currentDices;
+	}
+
+	removeDiceFromCurrent({ payload }: PlaceDataPayload) {
+		const diceIdToRemove = payload.id;
+
+		this.currentDices = this.currentDices.filter((dice) => dice.id !== diceIdToRemove);
+		this.messenger.send(Messages.InitCurrentDices, this.currentDices);
 	}
 }
