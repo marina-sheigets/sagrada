@@ -4,6 +4,9 @@ import { DicesBagService } from '../../services/dices-bag/dices-bag.service';
 import { BaseComponent } from '../../shared/base-component/base-component';
 import { BoardsFactoryService } from '../../services/boards-factory/boards-factory.service';
 import { CurrentDicesComponent } from '../../components/current-dices/current-dices.component';
+import { MessengerService } from '../../services/messenger/messenger.service';
+import { Messages } from '../../constants/messages';
+import { BoardCell } from '../../types/board-cell';
 
 import * as styles from './playing-field.component.css';
 
@@ -17,12 +20,9 @@ export class PlayingFieldComponent extends BaseComponent {
 		protected boardsFactory: BoardsFactoryService,
 		protected currentDices: CurrentDicesComponent,
 		protected dicesBagService: DicesBagService,
+		protected messenger: MessengerService,
 	) {
 		super(styles);
-
-		this.playersBoardsContainer.append(this.boardsFactory.init(this.AMOUNT_OF_PLAYERS));
-
-		this.init();
 
 		this.rootElement.append(
 			this.roundTracker.rootElement,
@@ -31,9 +31,13 @@ export class PlayingFieldComponent extends BaseComponent {
 		);
 
 		this.playersBoardsContainer.classList.add(styles.playersBoardsContainer);
+
+		this.messenger.subscribe(Messages.InitBoards, this.initPlayingField.bind(this));
 	}
 
-	init() {
-		this.dicesBagService.initAllDices();
+	private initPlayingField(boardsObjects: { [player: string]: BoardCell[] }) {
+		const boardsComponent: DocumentFragment = this.boardsFactory.init(boardsObjects);
+
+		this.playersBoardsContainer.append(boardsComponent);
 	}
 }

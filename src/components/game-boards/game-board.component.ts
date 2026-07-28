@@ -14,17 +14,14 @@ interface Player {
 }
 
 export class GameBoard extends BaseComponent {
-	private readonly xCells = 5;
-	private readonly yCells = 4;
-
 	onCellClick = new Informer();
 	private cellsContainer = document.createElement('div');
 	private boardTitle = document.createElement('h2');
 
 	constructor(
 		protected gameBoardService: GameBoardService,
-		//protected player: Player,
 		protected player: number,
+		protected board: BoardCell[],
 	) {
 		super(styles);
 
@@ -32,14 +29,12 @@ export class GameBoard extends BaseComponent {
 
 		this.rootElement.append(this.boardTitle, this.cellsContainer);
 
-		const board = this.gameBoardService.createBoard();
-
 		this.render(board);
 
 		this.cellsContainer.classList.add(styles.cellsContainer);
 	}
 
-	private render(board: BoardCell[]) {
+	public render(board: BoardCell[]) {
 		for (const boardCell of board) {
 			const cell = this.htmlToElement(html);
 

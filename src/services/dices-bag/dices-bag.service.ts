@@ -34,7 +34,7 @@ export class DicesBagService {
 		this.unusedDices = [...this.allDices];
 	}
 
-	getDicesPerRound() {
+	initDicesPerRound() {
 		this.currentDices = getRandomElementsFromArray(this.unusedDices, this.DICES_PER_ROUND);
 
 		this.unusedDices = this.unusedDices.filter(
@@ -42,7 +42,9 @@ export class DicesBagService {
 		);
 
 		this.usedDices = this.usedDices.concat(this.currentDices);
+	}
 
+	getDicesPerRound() {
 		return this.currentDices;
 	}
 }
