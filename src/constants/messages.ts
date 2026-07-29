@@ -5,4 +5,6 @@ export const enum Messages {
 	InitCurrentDices = 'InitCurrentDices',
 	InitBoards = 'InitBoards',
 	PlaceDice = 'PlaceDice',
+	NextTurn = 'NextTurn',
+	StartTurn = 'StartTurn',
 }

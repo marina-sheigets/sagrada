@@ -61,4 +61,6 @@ export class DicesBagService {
 		this.currentDices = this.currentDices.filter((dice) => dice.id !== diceIdToRemove);
 		this.messenger.send(Messages.InitCurrentDices, this.currentDices);
 	}
+
+	setLastDiceOnRoundTracker() {}
 }
