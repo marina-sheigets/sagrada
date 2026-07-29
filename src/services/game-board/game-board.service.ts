@@ -109,6 +109,7 @@ export class GameBoardService {
 
 	canPlaceDice({ boardId, payload, cellId }: PlaceDataPayload): boolean {
 		const board = this.findBoardById(boardId);
+
 		if (!board) return false;
 
 		const cellObject = this.getCellById(board, cellId);
@@ -134,6 +135,8 @@ export class GameBoardService {
 		const hasAdjacentDice = allNeighbors.some((n) => n.dice);
 
 		if (!hasAdjacentDice) return false; // must touch at least one placed dice, any direction
+
+		return true;
 	}
 
 	private checkCompatibilityWithNeighbors(board: BoardCell[], cellObject: BoardCell, dice: Dice) {
@@ -171,7 +174,6 @@ export class GameBoardService {
 	}
 
 	private handlePlaceDice({ cellId, payload, boardId }: PlaceDataPayload) {
-		debugger;
 		this.boards[boardId] = this.boards[boardId].map((cell) => {
 			if (cell.id === cellId) {
 				return {
