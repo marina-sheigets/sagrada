@@ -119,18 +119,25 @@ export class GameBoardService {
 		if (cellObject.constantColor && cellObject.constantColor !== payload.color) return false;
 		if (cellObject.constantValue && cellObject.constantValue !== payload.value) return false;
 
-		const isAnyDicePlaced = board.some((cell) => cell.dice);
-		if (!isAnyDicePlaced) return cellObject.isEdgeCell;
+		const isCompatible = this.checkCompatibilityWithNeighbors(board, cellObject, payload);
+		if (!isCompatible) return false;
 
-		if (!this.checkPosition(board, cellObject)) return false;
-		return this.checkCompatibilityWithNeighbors(board, cellObject, payload);
+		if (!this.isFirstMove(board)) {
+			return cellObject.isEdgeCell;
+		}
+
+		return this.isPositionValid(board, cellObject);
 	}
 
 	private findBoardById(boardId: string): BoardCell[] | undefined {
 		return this.boards[boardId];
 	}
 
-	private checkPosition(board: BoardCell[], cellObject: BoardCell) {
+	private isFirstMove(board: BoardCell[]) {
+		return board.some((cell) => cell.dice);
+	}
+
+	private isPositionValid(board: BoardCell[], cellObject: BoardCell) {
 		const allNeighbors = this.getAllNeighbors(board, cellObject);
 		const hasAdjacentDice = allNeighbors.some((n) => n.dice);
 
@@ -142,7 +149,7 @@ export class GameBoardService {
 	private checkCompatibilityWithNeighbors(board: BoardCell[], cellObject: BoardCell, dice: Dice) {
 		const orthogonalNeighbors = this.getOrthogonalNeighbors(board, cellObject);
 		const conflictsWithNeighbor = orthogonalNeighbors.some(
-			(n) => n.dice && (n.dice.color === dice.color || n.dice.value === dice.value),
+			(d) => d && (d.constantColor === dice.color || d.constantValue === dice.value),
 		);
 		return !conflictsWithNeighbor;
 	}
@@ -184,6 +191,11 @@ export class GameBoardService {
 			return cell;
 		});
 
+		this.messenger.send(Messages.NextTurn);
 		this.messenger.send(Messages.InitBoards, this.boards);
+	}
+
+	getBoards() {
+		return this.boards;
 	}
 }
