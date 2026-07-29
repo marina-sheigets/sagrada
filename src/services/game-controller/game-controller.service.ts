@@ -27,8 +27,8 @@ export class GameControllerService {
 
 		this.roundManagerService.onCurrentRoundFinished.subscribe(() => {
 			this.dicesBagService.setLastDiceOnRoundTracker();
-			// this.dicesBagService.initDicesPerRound();
-			// this.startRounds();
+			this.createDicesPerRound();
+			this.startRounds();
 		});
 
 		this.roundManagerService.onGameFinished.subscribe(() => {});

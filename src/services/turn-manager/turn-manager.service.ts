@@ -55,7 +55,7 @@ export class TurnManagerService {
 		return this.turn >= this.turns.length;
 	}
 
-	private reset() {
+	reset() {
 		this.turn = 0;
 		this.turns = [];
 	}

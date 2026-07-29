@@ -191,6 +191,7 @@ export class GameBoardService {
 			return cell;
 		});
 
+		this.messenger.send(Messages.RemoveDiceFromCurrent, payload);
 		this.messenger.send(Messages.NextTurn);
 		this.messenger.send(Messages.InitBoards, this.boards);
 	}

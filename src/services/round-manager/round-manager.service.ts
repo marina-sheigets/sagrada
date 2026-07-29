@@ -23,7 +23,7 @@ export class RoundManagerService {
 
 	startRound() {
 		const activePlayer = this.getActivePlayer();
-
+		this.turnManagerService.reset();
 		this.turnManagerService.startRound(this.playersService.getAllPlayers(), activePlayer);
 	}
 

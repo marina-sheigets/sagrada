@@ -8,4 +8,5 @@ export const enum Messages {
 	NextTurn = 'NextTurn',
 	StartTurn = 'StartTurn',
 	PlaceLastRoundDice = 'PlaceLastRoundDice',
+	RemoveDiceFromCurrent = 'RemoveDiceFromCurrent',
 }

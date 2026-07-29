@@ -6,7 +6,6 @@ import { generateId } from '../../utils/generate-id';
 import { Color } from '../../types/color';
 import { MessengerService } from '../messenger/messenger.service';
 import { Messages } from '../../constants/messages';
-import { PlaceDataPayload } from '../../types/place-dice-payload';
 
 @singleton()
 export class DicesBagService {
@@ -21,7 +20,10 @@ export class DicesBagService {
 	private currentDices: Dice[] = [];
 
 	constructor(protected messenger: MessengerService) {
-		this.messenger.subscribe(Messages.PlaceDice, this.removeDiceFromCurrent.bind(this));
+		this.messenger.subscribe(
+			Messages.RemoveDiceFromCurrent,
+			this.removeDiceFromCurrent.bind(this),
+		);
 	}
 
 	initAllDices() {
@@ -55,8 +57,8 @@ export class DicesBagService {
 		return this.currentDices;
 	}
 
-	removeDiceFromCurrent({ payload }: PlaceDataPayload) {
-		const diceIdToRemove = payload.id;
+	removeDiceFromCurrent(dice: Dice) {
+		const diceIdToRemove = dice.id;
 
 		this.currentDices = this.currentDices.filter((dice) => dice.id !== diceIdToRemove);
 		this.messenger.send(Messages.InitCurrentDices, this.currentDices);
