@@ -7,13 +7,7 @@ import { DICE_COLOR } from '../../constants/dice-colors';
 import { Dice } from '../../types/dice';
 import { MessengerService } from '../messenger/messenger.service';
 import { Messages } from '../../constants/messages';
-
-interface OnDiceDropProps {
-	payload: Dice;
-	dropZoneId: string;
-	dropZoneElement: HTMLElement;
-	boardId: string;
-}
+import { PlaceDataPayload } from '../../types/place-dice-payload';
 
 @singleton()
 export class GameBoardService {
@@ -113,21 +107,11 @@ export class GameBoardService {
 		return board.find((c) => c.row === row && c.column === column);
 	}
 
-	canPlaceDice({
-		boardId,
-		payload,
-		zoneElement,
-		zoneId,
-	}: {
-		payload: Dice;
-		zoneId: string;
-		zoneElement: HTMLElement;
-		boardId: string;
-	}): boolean {
+	canPlaceDice({ boardId, payload, cellId }: PlaceDataPayload): boolean {
 		const board = this.findBoardById(boardId);
 		if (!board) return false;
 
-		const cellObject = this.getCellById(board, zoneId);
+		const cellObject = this.getCellById(board, cellId);
 		if (!cellObject) return false;
 		if (cellObject.dice) return false;
 
@@ -186,9 +170,10 @@ export class GameBoardService {
 		].filter((c): c is BoardCell => c !== undefined);
 	}
 
-	private handlePlaceDice({ dropZoneId, payload, boardId }: OnDiceDropProps) {
+	private handlePlaceDice({ cellId, payload, boardId }: PlaceDataPayload) {
+		debugger;
 		this.boards[boardId] = this.boards[boardId].map((cell) => {
-			if (cell.id === dropZoneId) {
+			if (cell.id === cellId) {
 				return {
 					...cell,
 					dice: payload,

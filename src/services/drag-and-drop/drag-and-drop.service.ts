@@ -78,18 +78,19 @@ export class DragDropService {
 	}
 
 	private onPointerUp(e: PointerEvent) {
-		const draggableDice = document.elementFromPoint(e.clientX, e.clientY);
-		const zoneElement = draggableDice?.closest<HTMLElement>(this.dropZoneSelector);
-		const boardId = zoneElement?.closest('[data-role=board]')?.id!;
+		const activeElement = document.elementFromPoint(e.clientX, e.clientY);
+		const cellElement = activeElement?.closest<HTMLElement>(this.dropZoneSelector);
 
-		if (zoneElement && this.selectedDicePayload) {
-			const zoneId = zoneElement.dataset.dropZoneId!;
+		const boardId = cellElement?.closest('[data-role=board]')?.id!;
+
+		if (cellElement && this.selectedDicePayload) {
+			const cellId = cellElement.dataset.dropZoneId!;
 
 			const isPositionValid = this.isValid
 				? this.isValid({
 						payload: this.selectedDicePayload.payload,
-						zoneId,
-						zoneElement,
+						cellId,
+						cellElement,
 						boardId,
 					})
 				: false;
@@ -97,8 +98,8 @@ export class DragDropService {
 			if (isPositionValid) {
 				this.messenger.send(Messages.PlaceDice, {
 					payload: this.selectedDicePayload.payload,
-					dropZoneId: zoneId,
-					dropZoneElement: zoneElement,
+					cellId,
+					cellElement,
 					boardId: boardId,
 				});
 			}

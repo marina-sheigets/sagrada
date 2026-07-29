@@ -31,6 +31,7 @@ export class DiceComponent extends BaseComponent {
 			return;
 		}
 
+		this.diceElement.id = dice.id;
 		this.diceElement.dataset.face = String(dice.value);
 		this.diceElement.style.background = dice.color;
 	}

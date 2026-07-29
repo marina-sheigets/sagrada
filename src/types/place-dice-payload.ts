@@ -2,7 +2,7 @@ import { Dice } from './dice';
 
 export interface PlaceDataPayload {
 	payload: Dice;
-	zoneId: string;
-	zoneElement: HTMLElement;
+	cellId: string;
+	cellElement: HTMLElement;
 	boardId: string;
 }
