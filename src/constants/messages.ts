@@ -7,4 +7,5 @@ export const enum Messages {
 	PlaceDice = 'PlaceDice',
 	NextTurn = 'NextTurn',
 	StartTurn = 'StartTurn',
+	PlaceLastRoundDice = 'PlaceLastRoundDice',
 }

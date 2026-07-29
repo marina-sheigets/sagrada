@@ -62,5 +62,11 @@ export class DicesBagService {
 		this.messenger.send(Messages.InitCurrentDices, this.currentDices);
 	}
 
-	setLastDiceOnRoundTracker() {}
+	setLastDiceOnRoundTracker() {
+		const lastDice = this.currentDices[0];
+
+		this.currentDices = [];
+
+		this.messenger.send(Messages.PlaceLastRoundDice, lastDice);
+	}
 }

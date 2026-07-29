@@ -2,11 +2,10 @@ import { singleton } from 'tsyringe';
 import { Informer } from '../informer/informer.service';
 import { PlayerService } from '../player/player.service';
 import { TurnManagerService } from './../turn-manager/turn-manager.service';
+import { AMOUNT_OF_ROUNDS } from '../../constants/amount-of-rounds';
 
 @singleton()
 export class RoundManagerService {
-	private readonly AMOUNT_OF_ROUNDS = 10;
-
 	private activePlayerIndex = 0;
 	private currentRound = 1;
 
@@ -46,7 +45,7 @@ export class RoundManagerService {
 		this.onCurrentRoundFinished.inform();
 		this.currentRound++;
 
-		if (this.currentRound > this.AMOUNT_OF_ROUNDS) {
+		if (this.currentRound > AMOUNT_OF_ROUNDS) {
 			this.onGameFinished.inform();
 		}
 	}
